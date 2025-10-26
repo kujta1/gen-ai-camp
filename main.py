@@ -9,10 +9,12 @@ class LLMApp:
                  model="llama3.1",
                  temperature=0.7,
                  max_tokens=1024,
-                 default_system_prompt=None
+                 default_system_prompt="You are a helpful assistant."
                  ):
         """Initialize the LLM application"""
         self.model = model
+        if default_system_prompt is None:
+            default_system_prompt = "You are a helpful assistant."
         self.default_system_prompt = default_system_prompt
         self.conversation_history = []
         load_dotenv()
@@ -98,63 +100,71 @@ class LLMApp:
         return assistant_message
 
 
+    # def get_response(
+    #     self,
+    #     user_message: str,
+    #     system_prompt: str = None,
+    # ) -> str:
+    #     """
+    #     Get response from the LLM based on user message and optional system prompt
 
-    def get_response(
-        self,
-        user_message: str,
-        system_prompt: str = None,
-    ) -> str:
-        """
-        Get response from the LLM based on user message and optional system prompt
+    #     Args:
+    #         user_message: The user's message
+    #         system_prompt: Optional system prompt to set context
+    #         temperature: Sampling temperature (0-1)
+    #         max_tokens: Maximum tokens in response
 
-        Args:
-            user_message: The user's message
-            system_prompt: Optional system prompt to set context
-            temperature: Sampling temperature (0-1)
-            max_tokens: Maximum tokens in response
+    #     Returns:
+    #         The assistant's response text
+    #     """
 
-        Returns:
-            The assistant's response text
-        """
+    #     messages = []
 
-        messages = []
+    #     # Add system prompt if provided
+    #     if system_prompt:
+    #         messages.append(
+    #             {
+    #                 "role": "system",
+    #                 "content": f"{system_prompt}"
+    #             }
+    #         )
 
-        # Add system prompt if provided
-        if system_prompt:
-            messages.append(
-                {
-                    "role": "system",
-                    "content": f"{system_prompt}"
-                }
-            )
+    #     # Add conversation history
+    #     if self.conversation_history:
+    #         messages.extend(self.conversation_history)
 
-        # Add conversation history
-        if self.conversation_history:
-            messages.extend(self.conversation_history)
+    #     # Add current user's message
+    #     messages.append(
+    #         {
+    #             "role": "user",
+    #             "content": f"{user_message}"
+    #         }
+    #     )
+    #     # Make LLM call
+    #     if self.model in self.groq_models.values():
+    #         response = self.client.chat.completions.create(
+    #             model=self.model,
+    #             messages=messages,
+    #             temperature=self.temperature,
+    #             max_tokens=self.max_tokens,
+    #         )
+    #     else:
+    #         response = self.client.chat.completions.create(
+    #             model=self.model,
+    #             messages=messages,
+    #             temperature=1,  # in GPT 5 it is fixed
+    #             # it is different now, the old  max_tokens is deprecated
+    #             max_completion_tokens=self.max_tokens,
+    #         )
 
-        # Add current user's message
-        messages.append(
-            {
-                "role": "user",
-                "content": f"{user_message}"
-            }
-        )
-        # Make LLM call
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            temperature=self.temperature,
-            max_tokens=self.max_tokens,
-        )
+    #     # Extract response text
+    #     assistant_message = response.choices[0].message.content
 
-        # Extract response text
-        assistant_message = response.choices[0].message.content
-
-        return assistant_message
+    #     return assistant_message
 
 
-if __name__ == "__main__":
-    app = LLMApp()
-    user_input = "Hello, how are you?"
-    response = app.get_response(user_input)
-    print("Assistant:", response)
+# if __name__ == "__main__":
+#     app = LLMApp()
+#     user_input = "Hello, how are you?"
+#     response = app.get_response(user_input)
+#     print("Assistant:", response)
